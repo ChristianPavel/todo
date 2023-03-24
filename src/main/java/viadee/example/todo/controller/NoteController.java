@@ -15,6 +15,8 @@ import java.util.Optional;
 public class NoteController {
     NoteRepository noteRepository;
 
+    static final String NOT_FOUND = "Note with this name was not found";
+
     NoteController(final NoteRepository noteRepository){
         this.noteRepository = noteRepository;
     }
@@ -33,7 +35,7 @@ public class NoteController {
     public void changeNoteStatus(@RequestBody Note noteUpdate){
         Optional<Note> note = noteRepository.findById(noteUpdate.getId());
         if(note.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Note with this name was note found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
         }
         Note noteInstance = note.get();
         noteInstance.changeStatus();
@@ -44,35 +46,35 @@ public class NoteController {
     public void deleteEntry(@RequestBody Note delNote){
         Optional<Note> note = noteRepository.findById(delNote.getId());
         if(note.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Note with this name was note found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
         }
         noteRepository.deleteById(note.get().getId());
     }
 
-    @GetMapping("/{name}")
-    public Note accessNote(@PathVariable String name){
-        Optional<Note> note = noteRepository.findByName(name);
+    @GetMapping("/info/{id}")
+    public Note accessNote(@PathVariable long id){
+        Optional<Note> note = noteRepository.findById(id);
         if(note.isPresent()){
             return note.get();
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Note with this name was note found");
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
     }
-    @PatchMapping("/{name}")
-    public void changeNoteStatus(@PathVariable String name, @RequestBody Note noteUpdate){
-        Optional<Note> note = noteRepository.findByName(name);
+    @PatchMapping("/info/{id}")
+    public void changeNoteStatus(@PathVariable Long id, @RequestBody Note noteUpdate){
+        Optional<Note> note = noteRepository.findById(id);
         if(note.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Note with this name was note found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
         }
         Note noteInstance = note.get();
         noteInstance.update(noteUpdate);
         noteRepository.save(noteInstance);
     }
 
-    @DeleteMapping("/{name}")
-    public void deleteEntry(@PathVariable String name){
-        Optional<Note> note = noteRepository.findByName(name);
+    @DeleteMapping("/info/{id}")
+    public void deleteEntry(@PathVariable Long id){
+        Optional<Note> note = noteRepository.findById(id);
         if(note.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Note with this name was note found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
         }
         noteRepository.deleteById(note.get().getId());
     }

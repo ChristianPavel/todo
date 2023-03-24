@@ -32,6 +32,13 @@ public class Note {
         this.created = LocalDate.now();
     }
 
+    public Note(String name, LocalDate dueDate){
+        this.name = name;
+        this.dueDate = dueDate;
+        this.done = false;
+        this.created = LocalDate.now();
+    }
+
     public Note(String name, String description, LocalDate dueDate){
         this.name = name;
         this.description = description;
@@ -86,12 +93,7 @@ public class Note {
     }
 
     public void changeStatus() {
-        setDone(!getDone());
-        if (getDone()){
-            setFinished(LocalDate.now());
-        } else {
-            setFinished(null);
-        }
+        handleDone(!getDone());
     }
 
     public LocalDate getCreated() {
@@ -119,10 +121,18 @@ public class Note {
     }
 
     public void update(Note note){
-        setDone(note.getDone());
+        handleDone(note.done);
         setName(note.getName());
         setDescription(note.getDescription());
         setComments(note.getComments());
         setDueDate(note.getDueDate());
+    }
+    private void handleDone(boolean status){
+        setDone(status);
+        if (getDone()){
+            setFinished(LocalDate.now());
+        } else {
+            setFinished(null);
+        }
     }
 }
