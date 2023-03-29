@@ -6,6 +6,7 @@ import org.springframework.web.server.ResponseStatusException;
 import viadee.example.todo.data.model.Note;
 import viadee.example.todo.persistence.NoteRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -91,5 +92,14 @@ public class NoteController {
         return retrieveAllNotes().stream()
                 .filter(Note::getDone)
                 .toList();
+    }
+
+    @GetMapping("/dashboard")
+    public List<Note> retrieveDashboardNotes(){
+        return (List<Note>) noteRepository.findByDueDateGreaterThanEqual(LocalDate.now());
+        /*if (list.size() > 5){
+            list = list.subList(0, 5);
+        }
+        return list;*/
     }
 }
