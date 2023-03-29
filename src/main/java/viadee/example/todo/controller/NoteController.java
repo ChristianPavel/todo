@@ -41,19 +41,8 @@ public class NoteController {
         noteRepository.save(note);
     }
 
-    // TODO: Refactor to use a path variable "ID" instead of transmitting the entire note
-
-    /*public void changeNoteStatus(@RequestBody Note noteUpdate) {
-        Optional<Note> note = noteRepository.findById(noteUpdate.getId());
-        if (note.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
-        }
-        Note noteInstance = note.get();
-        noteInstance.changeStatus();
-        noteRepository.save(noteInstance);
-    }*/
     @PatchMapping
-    public void changeNoteStatus(@RequestBody Long noteID) {
+    public void changeNoteStatus(@RequestBody long noteID) {
         Optional<Note> note = noteRepository.findById(noteID);
         if (note.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
