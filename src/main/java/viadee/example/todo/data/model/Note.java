@@ -1,6 +1,9 @@
 package viadee.example.todo.data.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 import java.time.LocalDate;
 
@@ -9,43 +12,21 @@ public class Note {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    long id;
+    private long id;
 
-    String name;
+    private String name;
 
-    String description;
+    private String description;
 
-    String comments;
+    private String comments;
 
-    Boolean done;
+    private Boolean done;
 
-    LocalDate created;
+    private LocalDate created;
 
-    LocalDate dueDate;
+    private LocalDate dueDate;
 
-    LocalDate finished;
-
-    public Note(String name, String description){
-        this.name = name;
-        this.description = description;
-        this.done = false;
-        this.created = LocalDate.now();
-    }
-
-    public Note(String name, LocalDate dueDate){
-        this.name = name;
-        this.dueDate = dueDate;
-        this.done = false;
-        this.created = LocalDate.now();
-    }
-
-    public Note(String name, String description, LocalDate dueDate){
-        this.name = name;
-        this.description = description;
-        this.done = false;
-        this.created = LocalDate.now();
-        this.dueDate = dueDate;
-    }
+    private LocalDate finished;
 
     public Note() {
         this.done = false;
@@ -120,16 +101,17 @@ public class Note {
         this.finished = finished;
     }
 
-    public void update(Note note){
+    public void update(Note note) {
         handleDone(note.done);
         setName(note.getName());
         setDescription(note.getDescription());
         setComments(note.getComments());
         setDueDate(note.getDueDate());
     }
-    private void handleDone(boolean status){
+
+    private void handleDone(boolean status) {
         setDone(status);
-        if (getDone()){
+        if (getDone()) {
             setFinished(LocalDate.now());
         } else {
             setFinished(null);

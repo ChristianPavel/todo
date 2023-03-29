@@ -2,13 +2,10 @@ package viadee.example.todo.config;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,24 +21,25 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig{
+public class WebSecurityConfig {
 
     private CorsProperties corsProperties;
-    public WebSecurityConfig(CorsProperties corsProperties){
+
+    public WebSecurityConfig(CorsProperties corsProperties) {
         this.corsProperties = corsProperties;
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http //
+        http
                 .authorizeHttpRequests(authorize -> authorize //
-                        .dispatcherTypeMatchers(HttpMethod.valueOf("/ping")).permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .httpBasic().and()
                 .csrf().disable();
-        if (corsProperties.isActive()){
+
+        if (corsProperties.isActive()) {
             http.cors();
         }
 
@@ -50,7 +48,7 @@ public class WebSecurityConfig{
 
     @Bean
     @ConditionalOnProperty(prefix = "security.cors", name = "active", havingValue = "true")
-    CorsConfigurationSource corsConfigurationSource(){
+    CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(corsProperties.getAllowedOrigins()));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PATCH"));
@@ -62,13 +60,12 @@ public class WebSecurityConfig{
         return source;
     }
 
-
     @Bean
     public UserDetailsService userDetailsService() {
         UserDetails user =
                 User.withDefaultPasswordEncoder()
-                        .username("user")
-                        .password("password")
+                        .username("XQVpGsEAR9F5hH")
+                        .password("mDEujrr4qbXG7h")
                         .roles("USER")
                         .build();
 

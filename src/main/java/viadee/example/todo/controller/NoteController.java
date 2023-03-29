@@ -10,32 +10,42 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-
 @RestController
 @RequestMapping("/notes")
 public class NoteController {
-    NoteRepository noteRepository;
+    private final NoteRepository noteRepository;
 
     static final String NOT_FOUND = "Note with this name was not found";
 
-    NoteController(final NoteRepository noteRepository){
+    NoteController(final NoteRepository noteRepository) {
         this.noteRepository = noteRepository;
     }
 
-    @GetMapping("")
-    public List<Note> retrieveAllNotes(){
-        return (List<Note>) noteRepository.findAll(); // todo: exception Handling
+    @GetMapping
+    public List<Note> retrieveAllNotes(@RequestParam(required = false) String status) {
+        if (status.equals("pending")) {
+            return ((List<Note>) noteRepository.findAll()).stream()
+                    .filter(n -> !n.getDone())
+                    .toList();
+        } else if (status.equals("finished")) {
+            return ((List<Note>) noteRepository.findAll()).stream()
+                    .filter(Note::getDone)
+                    .toList();
+        }
+        return (List<Note>) noteRepository.findAll();
     }
 
-    @PostMapping("")
-    public void createNote(@RequestBody Note note){
+
+    @PostMapping
+    public void createNote(@RequestBody Note note) {
         noteRepository.save(note);
     }
 
-    @PatchMapping("")
-    public void changeNoteStatus(@RequestBody Note noteUpdate){
+    // TODO: Refactor to use a path variable "ID" instead of transmitting the entire note
+    @PatchMapping
+    public void changeNoteStatus(@RequestBody Note noteUpdate) {
         Optional<Note> note = noteRepository.findById(noteUpdate.getId());
-        if(note.isEmpty()){
+        if (note.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
         }
         Note noteInstance = note.get();
@@ -43,27 +53,29 @@ public class NoteController {
         noteRepository.save(noteInstance);
     }
 
-    @DeleteMapping("")
-    public void deleteEntry(@RequestBody Note delNote){
+    // TODO: Refactor to use a path variable "ID" instead of transmitting the entire note
+    @DeleteMapping
+    public void deleteEntry(@RequestBody Note delNote) {
         Optional<Note> note = noteRepository.findById(delNote.getId());
-        if(note.isEmpty()){
+        if (note.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
         }
         noteRepository.deleteById(note.get().getId());
     }
 
-    @GetMapping("/info/{id}")
-    public Note accessNote(@PathVariable long id){
+    @GetMapping("/{id}")
+    public Note accessNote(@PathVariable long id) {
         Optional<Note> note = noteRepository.findById(id);
-        if(note.isPresent()){
+        if (note.isPresent()) {
             return note.get();
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
     }
-    @PatchMapping("/info/{id}")
-    public void changeNoteStatus(@PathVariable Long id, @RequestBody Note noteUpdate){
+
+    @PatchMapping("/{id}")
+    public void changeNoteStatus(@PathVariable Long id, @RequestBody Note noteUpdate) {
         Optional<Note> note = noteRepository.findById(id);
-        if(note.isEmpty()){
+        if (note.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
         }
         Note noteInstance = note.get();
@@ -71,35 +83,18 @@ public class NoteController {
         noteRepository.save(noteInstance);
     }
 
-    @DeleteMapping("/info/{id}")
-    public void deleteEntry(@PathVariable Long id){
+    @DeleteMapping("/{id}")
+    public void deleteEntry(@PathVariable Long id) {
         Optional<Note> note = noteRepository.findById(id);
-        if(note.isEmpty()){
+        if (note.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
         }
         noteRepository.deleteById(note.get().getId());
     }
 
-    @GetMapping("/pending")
-    public List<Note> retrievePendingNotes(){
-        return retrieveAllNotes().stream()
-                .filter(n -> !n.getDone())
-                .toList();
-    }
-
-    @GetMapping("/finished")
-    public List<Note> retrieveFinishedNotes(){
-        return retrieveAllNotes().stream()
-                .filter(Note::getDone)
-                .toList();
-    }
 
     @GetMapping("/dashboard")
-    public List<Note> retrieveDashboardNotes(){
+    public List<Note> retrieveDashboardNotes() {
         return (List<Note>) noteRepository.findByDueDateGreaterThanEqual(LocalDate.now());
-        /*if (list.size() > 5){
-            list = list.subList(0, 5);
-        }
-        return list;*/
     }
 }
