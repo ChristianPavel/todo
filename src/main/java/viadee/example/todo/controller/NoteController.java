@@ -42,9 +42,19 @@ public class NoteController {
     }
 
     // TODO: Refactor to use a path variable "ID" instead of transmitting the entire note
-    @PatchMapping
-    public void changeNoteStatus(@RequestBody Note noteUpdate) {
+
+    /*public void changeNoteStatus(@RequestBody Note noteUpdate) {
         Optional<Note> note = noteRepository.findById(noteUpdate.getId());
+        if (note.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
+        }
+        Note noteInstance = note.get();
+        noteInstance.changeStatus();
+        noteRepository.save(noteInstance);
+    }*/
+    @PatchMapping
+    public void changeNoteStatus(@RequestBody Long noteID) {
+        Optional<Note> note = noteRepository.findById(noteID);
         if (note.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
         }
@@ -53,15 +63,6 @@ public class NoteController {
         noteRepository.save(noteInstance);
     }
 
-    // TODO: Refactor to use a path variable "ID" instead of transmitting the entire note
-    @DeleteMapping
-    public void deleteEntry(@RequestBody Note delNote) {
-        Optional<Note> note = noteRepository.findById(delNote.getId());
-        if (note.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
-        }
-        noteRepository.deleteById(note.get().getId());
-    }
 
     @GetMapping("/{id}")
     public Note accessNote(@PathVariable long id) {
