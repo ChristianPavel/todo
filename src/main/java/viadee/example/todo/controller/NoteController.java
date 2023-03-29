@@ -1,90 +1,59 @@
 package viadee.example.todo.controller;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import viadee.example.todo.data.model.Note;
-import viadee.example.todo.persistence.NoteRepository;
+import viadee.example.todo.service.NoteService;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/notes")
 public class NoteController {
-    private final NoteRepository noteRepository;
 
-    static final String NOT_FOUND = "Note with this name was not found";
 
-    NoteController(final NoteRepository noteRepository) {
-        this.noteRepository = noteRepository;
+    private final NoteService noteService;
+
+
+    NoteController(final NoteService noteService) {
+
+        this.noteService = noteService;
     }
 
     @GetMapping
-    public List<Note> retrieveAllNotes(@RequestParam(required = false) String status) {
-        if (status.equals("pending")) {
-            return ((List<Note>) noteRepository.findAll()).stream()
-                    .filter(n -> !n.getDone())
-                    .toList();
-        } else if (status.equals("finished")) {
-            return ((List<Note>) noteRepository.findAll()).stream()
-                    .filter(Note::getDone)
-                    .toList();
-        }
-        return (List<Note>) noteRepository.findAll();
+    public List<Note> retrieveNotes(@RequestParam(required = false) String status) {
+        return noteService.retrieveNotes(status);
     }
-
 
     @PostMapping
     public void createNote(@RequestBody Note note) {
-        noteRepository.save(note);
+        noteService.createNote(note);
     }
 
     @PatchMapping
     public void changeNoteStatus(@RequestBody long noteID) {
-        Optional<Note> note = noteRepository.findById(noteID);
-        if (note.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
-        }
-        Note noteInstance = note.get();
-        noteInstance.changeStatus();
-        noteRepository.save(noteInstance);
+        noteService.changeNoteStatus(noteID);
     }
 
 
     @GetMapping("/{id}")
     public Note accessNote(@PathVariable long id) {
-        Optional<Note> note = noteRepository.findById(id);
-        if (note.isPresent()) {
-            return note.get();
-        }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
+        return noteService.retrieveSpecificNote(id);
     }
 
     @PatchMapping("/{id}")
     public void changeNoteStatus(@PathVariable Long id, @RequestBody Note noteUpdate) {
-        Optional<Note> note = noteRepository.findById(id);
-        if (note.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
-        }
-        Note noteInstance = note.get();
-        noteInstance.update(noteUpdate);
-        noteRepository.save(noteInstance);
+        noteService.updateNote(id, noteUpdate);
     }
 
     @DeleteMapping("/{id}")
     public void deleteEntry(@PathVariable Long id) {
-        Optional<Note> note = noteRepository.findById(id);
-        if (note.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
-        }
-        noteRepository.deleteById(note.get().getId());
+        noteService.deleteNote(id);
     }
 
 
     @GetMapping("/dashboard")
     public List<Note> retrieveDashboardNotes() {
-        return (List<Note>) noteRepository.findByDueDateGreaterThanEqual(LocalDate.now());
+        return noteService.retrieveDashboardNotes();
+
     }
 }
