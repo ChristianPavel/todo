@@ -15,7 +15,6 @@ public class NoteController {
 
 
     NoteController(final NoteService noteService) {
-
         this.noteService = noteService;
     }
 
@@ -41,7 +40,7 @@ public class NoteController {
     }
 
     @PatchMapping("/{id}")
-    public void changeNoteStatus(@PathVariable Long id, @RequestBody Note noteUpdate) {
+    public void updateNote(@PathVariable Long id, @RequestBody Note noteUpdate) {
         noteService.updateNote(id, noteUpdate);
     }
 

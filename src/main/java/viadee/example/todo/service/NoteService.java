@@ -2,8 +2,6 @@ package viadee.example.todo.service;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 import viadee.example.todo.data.model.Note;
 import viadee.example.todo.persistence.NoteRepository;
@@ -49,7 +47,7 @@ public class NoteService {
         noteRepository.save(noteInstance);
     }
 
-    public Note retrieveSpecificNote(@PathVariable long id) {
+    public Note retrieveSpecificNote(long id) {
         Optional<Note> note = noteRepository.findById(id);
         if (note.isPresent()) {
             return note.get();
@@ -57,7 +55,7 @@ public class NoteService {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
     }
 
-    public void updateNote(@PathVariable Long id, @RequestBody Note noteUpdate) {
+    public void updateNote(Long id, Note noteUpdate) {
         Optional<Note> note = noteRepository.findById(id);
         if (note.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
@@ -67,7 +65,7 @@ public class NoteService {
         noteRepository.save(noteInstance);
     }
 
-    public void deleteNote(@PathVariable Long id) {
+    public void deleteNote(Long id) {
         Optional<Note> note = noteRepository.findById(id);
         if (note.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
