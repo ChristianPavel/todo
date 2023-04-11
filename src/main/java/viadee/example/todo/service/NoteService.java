@@ -2,7 +2,7 @@ package viadee.example.todo.service;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+//import org.springframework.web.server.ResponseStatusException;
 import viadee.example.todo.data.model.Note;
 import viadee.example.todo.persistence.NoteRepository;
 
@@ -40,7 +40,7 @@ public class NoteService {
     public void changeNoteStatus(long noteID) {
         Optional<Note> note = noteRepository.findById(noteID);
         if (note.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
+            //throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
         }
         Note noteInstance = note.get();
         noteInstance.changeStatus();
@@ -49,16 +49,17 @@ public class NoteService {
 
     public Note retrieveSpecificNote(long id) {
         Optional<Note> note = noteRepository.findById(id);
-        if (note.isPresent()) {
-            return note.get();
+        if (note.isEmpty()) {
+            //throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
+        return note.get();
+
     }
 
     public void updateNote(Long id, Note noteUpdate) {
         Optional<Note> note = noteRepository.findById(id);
         if (note.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
+            //throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
         }
         Note noteInstance = note.get();
         noteInstance.update(noteUpdate);
@@ -68,7 +69,7 @@ public class NoteService {
     public void deleteNote(Long id) {
         Optional<Note> note = noteRepository.findById(id);
         if (note.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
+            //throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND);
         }
         noteRepository.deleteById(note.get().getId());
     }
