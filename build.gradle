@@ -5,16 +5,26 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
+    id 'org.springframework.boot' version '3.0.4'
 }
+
+apply plugin: 'java'
+
+
 
 
 jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
         attributes(
                 'Main-Class': 'viadee.example.todo.TodoApplication'
         )
     }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }
+
 
 repositories {
     mavenLocal()
