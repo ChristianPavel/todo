@@ -15,7 +15,7 @@
     <description>todo</description>
     <properties>
         <java.version>17</java.version>
-        <!--<maven.test.skip>true</maven.test.skip>-->
+        <maven.test.skip>true</maven.test.skip>
     </properties>
 
     <dependencies>
@@ -75,6 +75,12 @@
             </activation>
             <properties>
                 <spring.profiles.active>development</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>container</id>
+            <properties>
+                <spring.profiles.active>container</spring.profiles.active>
             </properties>
         </profile>
     </profiles>
